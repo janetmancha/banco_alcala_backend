@@ -1,0 +1,5 @@
+Dependencias de python necesarias: 
+
+flask
+mysql
+mysql.conector

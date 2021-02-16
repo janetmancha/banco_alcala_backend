@@ -1,0 +1,294 @@
+openapi: 3.0.1
+info: 
+  title: Banco Alcala
+  description: customers, bank accounts and movements information
+  contact: 
+    name: Janet
+    email: janet.mancha@gmail.com
+  version: 1.0.0
+servers:
+  - url: localhost:5000 
+    description: servers for development
+tags:
+  - name: Customers
+    description: customers information
+  - name: Accounts
+    description: bank accounts information
+  - name: Movements
+    description: detail of bank movements
+paths:
+  #CUSTOMERS
+  /api/customers:
+    get: 
+      tags: 
+      - Customers
+      summary: Client List
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customers'
+        204: 
+          description: No content
+    post:
+      tags: 
+      - Customers 
+      summary: Create New Customer
+      requestBody:
+        description: customers information
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customers'
+      responses:
+        201: 
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerCreated'
+        409:
+          description: Conflict
+  /api/customers/{dni}:
+    parameters:
+      - name: dni
+        in: path
+        description: customer dni
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+      - Customers
+      summary: Find a Customer
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customers'
+        404: 
+          description: Not found
+    delete:
+      tags:
+      - Customers
+      summary: Delete a Customer
+      responses:
+        201:
+          description: Deleted
+        404: 
+          description: Not found  
+  #ACCOUNTS
+  /api/accounts:
+    post:
+      tags: 
+      - Accounts 
+      summary: Create New Account
+      requestBody:
+        description: accounts information
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Accounts'
+      responses:
+        201: 
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountCreated'
+        409:
+          description: Conflict
+  /api/accounts/{accountNumber}:
+    parameters:
+      - name: accountNumber
+        in: path
+        description: account number
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+      - Accounts
+      summary: Find an Account
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accounts'
+        404: 
+          description: Not found
+    delete:
+      tags:
+      - Accounts
+      summary: Delete an Account
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accounts'
+        404: 
+          description: Not found
+        409:
+          description: Conflict
+  /api/accounts?filterByDNI=dni:
+    parameters:
+      - name: filterByDNI
+        in: query
+        description: dni
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+      - Accounts
+      summary: List customer accounts
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Accounts'
+        400: 
+          description: Bad Request
+        404: 
+          description: Not Found
+  #MOVEMENTS
+  /api/movements:
+    post:
+      tags: 
+      - Movements 
+      summary: Make movement
+      requestBody:
+        description: movement information
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Movements'
+      responses:
+        201: 
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MovementCreated'
+  /api/movements/{originAccount}:
+    parameters:
+      - name: originAccount
+        in: path
+        description: account number
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+      - Movements
+      summary: account movements
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movements'
+        404: 
+          description: Not found
+components:
+  schemas:
+    #CUSTOMERS
+    Customers:
+      type: object
+      properties: 
+        dni:
+          type: string
+          example: 50106621V
+        name:
+          type: string
+          example: Janet Mancha Serrano
+        password:
+          type: string
+          example: password123
+      required:
+      - dni
+      - name
+      - password
+    CustomerCreated:
+      type: object
+      properties: 
+        dni:
+          type: string
+          example: 20301103J
+    #ACCOUNTS
+    Accounts:
+      type: object
+      properties: 
+        dni:
+          type: string
+          example: 50106621V
+        accountNumber:
+          type: integer
+          example: 0123456789
+        accountBalance:
+          type: integer
+          example: 1200
+      required:
+      - dni
+      - accountNumber
+    AccountCreated:
+      type: object
+      properties: 
+        accountNumber:
+          type: integer
+          example: 0123456789
+    #MOVEMENTS
+    Movements:
+      type: object
+      properties:
+        id: 
+          type: integer
+          example: 1
+        originAccount: 
+          type: integer
+          example: 0123456789
+        destinationAccount:
+          type: integer
+          example: 0123456789
+        amount:
+          type: integer
+          example: 150
+        date:
+          type: string
+          example: 01-10-2120
+          format: date
+        movementType:
+          type: string
+          enum: [deposit, withdrawn, transfer]
+          example: transfer
+      required:
+        - amount
+        - movementType
+    MovementCreated:
+      type: object
+      properties: 
+        id:
+          type: integer
+          example: 1
+        movementType:
+          type: string
+          enum: [deposit, withdrawn, transfer]
+          example: transfer
+
+          
+        
+        
+
