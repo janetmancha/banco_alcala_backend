@@ -182,6 +182,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MovementCreated'
+        409:
+          description: Conflict
   /api/movements/{originAccount}:
     parameters:
       - name: originAccount

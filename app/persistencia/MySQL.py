@@ -5,6 +5,12 @@ from mysql.connector import errorcode
 class AccountWithBalance (Exception):
     pass
 
+class AccountnotExits (Exception):
+    pass
+
+class TypeMovementsnotExits (Exception):
+    pass
+
 conexion = None
 cursor = None
 
@@ -115,24 +121,42 @@ def deleteAccount(accountNumber):
     return None
     
 #MOVEMENTS
-def listMovements(originAccount):
-    cursor.execute(f"SELECT * FROM movements WHERE originAccount={originAccount}")
+def listMovements(numberAccount):
+    cursor.execute(f"SELECT * FROM movements WHERE originAccount={numberAccount} OR destinationAccount={numberAccount}")
     movements = cursor.fetchall()
 
     return [{"id":movement[0],"originAccount":movement[1],"destinationAccount":movement[2],"amount":movement[3],"date":movement[4],"movementType":movement[5]} for movement in movements]
 
-def newMovements(originAccount, amount,movementType,destinationAccount=0):
+def newMovements(originAccount, amount,movementType,destinationAccount):
+    cursor = conexion.cursor(buffered=True)
+    print(destinationAccount)
     try:
+        if originAccount == destinationAccount:
+            raise AccountnotExits("Cuenta origen igual a cuenta destino")
+        if findAccount(originAccount) == None:
+            raise AccountnotExits("Cuenta origen no existe")
+        
+        if movementType == "deposit":
+            cursor.execute(f"UPDATE accounts SET accountBalance = accountBalance + {amount} WHERE accountNumber = {originAccount}")
+        elif movementType == "withdrawn":
+            cursor.execute(f"UPDATE accounts SET accountBalance = accountBalance - {amount} WHERE accountNumber = {originAccount}")
+        elif movementType == "transfer":
+            if findAccount(destinationAccount) == None:
+                raise AccountnotExits("Cuenta destino no existe")
+            cursor.execute(f"UPDATE accounts SET accountBalance = accountBalance - {amount} WHERE accountNumber = {originAccount}")
+            cursor.execute(f"UPDATE accounts SET accountBalance = accountBalance + {amount} WHERE accountNumber = {destinationAccount}")
+        else:
+            raise TypeMovementsnotExits("El tipo de movimiento no existe")
+
         cursor.execute(f"INSERT INTO movements (originAccount,destinationAccount,amount,date,movementType) VALUES ({originAccount}, {destinationAccount}, {amount}, NOW(),'{movementType}')")
-        cursor.execute(f"UPDATE accounts SET accountBalance = accountBalance + {amount} WHERE accountNumber = {originAccount}")
         print ("Movimiento realizado")
 
         conexion.commit()
 
     except mysql.connector.Error as error :
         print("Error en el movimiento, no se realiza ningún cambio: {}".format(error))
-        #reverting changes because of exception
+        #deshace los cambios debido a la excepción
         conexion.rollback()
-
+        
     finally:
         cursor.close()

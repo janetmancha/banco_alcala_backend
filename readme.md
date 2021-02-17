@@ -33,9 +33,11 @@ curl -X DELETE localhost:5000/api/accounts/4
 curl -X DELETE localhost:5000/api/accounts/200
 
 ---movimientos---
-- listar movimientos de una cuenta: curl localhost:5000/api/customers/4
-Insertar nuevo movimiento: curl -d '{"accountNumber": 3,"dni": "1234P", "accountBalance": 700}' -H "content-type: application/json" localhost:5000/api/accounts
+- listar movimientos de una cuenta: curl localhost:5000/api/movements/4
+- Insertar nuevo movimiento: curl -d '{"accountNumber": 3,"dni": "1234P", "accountBalance": 700}' -H "content-type: application/json" localhost:5000/api/accounts
 curl -d '{"originAccount": 4,"amount": 1245, "movementType": "deposit","destinationAccount":2}' -H "content-type: application/json" localhost:5000/api/movements
+- Sacar dinero: curl -d '{"originAccount": 4,"amount": 400, "movementType": "withdrawn"}' -H "content-type: application/json" localhost:5000/api/movements
+- Trasferir dinero: curl -d '{"originAccount": 4,"amount": 100, "movementType": "transfer", "destinationAccount": 3}' -H "content-type: application/json" localhost:5000/api/movements
 
 SWAGGER: 
 - Ejecutar: boton derecho sobre el fichero banco_alcala.yaml/Preview Swagger

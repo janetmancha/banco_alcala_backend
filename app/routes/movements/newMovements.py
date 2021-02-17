@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from app.persistencia.MySQL import newMovements
+from app.persistencia.MySQL import newMovements, AccountnotExits, TypeMovementsnotExits
 from app.routes.common import app
 from mysql.connector import IntegrityError
 from mysql.connector import Error
@@ -15,7 +15,11 @@ def new_Movement():
         destinationAccount = data["destinationAccount"]
 
     try:
-        result = newMovements(data["originAccount"],data["amount"],data["movementType"])
+        result = newMovements(data["originAccount"],data["amount"],data["movementType"],destinationAccount)
         return { "originAccount": data["originAccount"]}, 201
-    except IntegrityError as e:
-        return { "message": "El cliente no existe" }, 409
+    except AccountnotExits as e:
+        print(e)
+        return { "message": str(e) }, 409
+    except TypeMovementsnotExits as e:
+        print(e)
+        return { "message": str(e) }, 409

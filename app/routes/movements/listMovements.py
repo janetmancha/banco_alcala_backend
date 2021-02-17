@@ -9,4 +9,4 @@ def list_Movements(originAccount):
     
     if len(result) > 0:
         return jsonify(result),200
-    return '', 204 
+    return '', 404 
