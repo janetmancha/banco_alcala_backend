@@ -20,11 +20,10 @@ class BaseTestClass(unittest.TestCase):
         newAccounts(5,'1234M',2000)
         newAccounts(6,'1234J',0)
 
-        newMovements(4,200,'deposit',2)
-        newMovements(4,100,'withdrawn',2)
-        newMovements(4,500,'transfer',2)
+        newMovements(4,2000,'deposit',0)
+        newMovements(4,100,'withdrawn',0)
+        newMovements(4,500,'transfer',1)
         
-    
     def tearDown(self):
         # deleteCustomerTest()
         deleteCustomer('1234J')

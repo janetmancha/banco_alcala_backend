@@ -18,8 +18,6 @@ def new_Movement():
         result = newMovements(data["originAccount"],data["amount"],data["movementType"],destinationAccount)
         return { "originAccount": data["originAccount"]}, 201
     except AccountnotExits as e:
-        print(e)
         return { "message": str(e) }, 409
     except TypeMovementsnotExits as e:
-        print(e)
         return { "message": str(e) }, 409

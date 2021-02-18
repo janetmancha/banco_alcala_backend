@@ -129,7 +129,6 @@ def listMovements(numberAccount):
 
 def newMovements(originAccount, amount,movementType,destinationAccount):
     cursor = conexion.cursor(buffered=True)
-    print(destinationAccount)
     try:
         if originAccount == destinationAccount:
             raise AccountnotExits("Cuenta origen igual a cuenta destino")
@@ -149,7 +148,6 @@ def newMovements(originAccount, amount,movementType,destinationAccount):
             raise TypeMovementsnotExits("El tipo de movimiento no existe")
 
         cursor.execute(f"INSERT INTO movements (originAccount,destinationAccount,amount,date,movementType) VALUES ({originAccount}, {destinationAccount}, {amount}, NOW(),'{movementType}')")
-        print ("Movimiento realizado")
 
         conexion.commit()
 

@@ -55,10 +55,6 @@ TIPS:
 +++++++++++++++ ROADMAP+++++++++++++++
 - Inicio sesión 
 - Cerrar sesión 
-- Crear los Endopints:
-    Movimientos: 
-        Hacer Transferencia, sacar dinero o ingresar dinero
-
 - Crear los test:
     Movimientos: 
         Hacer Transferencia, sacar dinero o ingresar dinero
@@ -94,6 +90,7 @@ TIPS:
         Borrar Cuenta
     Movimientos:
         Listar movimientos de una cuenta
+        Hacer Transferencia, sacar dinero o ingresar dinero
 - Crear los test:
     Clientes:
         Listar todos los Clientes

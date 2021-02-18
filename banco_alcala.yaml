@@ -203,8 +203,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Movements'
-        404: 
-          description: Not found
+        204: 
+          description: Not Content
 components:
   schemas:
     #CUSTOMERS
