@@ -5,10 +5,19 @@ from mysql.connector import errorcode
 class AccountWithBalance (Exception):
     pass
 
-class AccountnotExits (Exception):
+class AccountOriginNotExits (Exception):
+    pass
+
+class AccountsEquals (Exception):
     pass
 
 class TypeMovementsnotExits (Exception):
+    pass
+
+class NoCredit (Exception):
+    pass
+
+class AccountDestinationNotExits (Exception):
     pass
 
 conexion = None
@@ -131,18 +140,23 @@ def newMovements(originAccount, amount,movementType,destinationAccount):
     cursor = conexion.cursor(buffered=True)
     try:
         if originAccount == destinationAccount:
-            raise AccountnotExits("Cuenta origen igual a cuenta destino")
+            raise AccountsEquals("Cuenta origen igual a cuenta destino")
         if findAccount(originAccount) == None:
-            raise AccountnotExits("Cuenta origen no existe")
+            raise AccountOriginNotExits("Cuenta origen no existe")
         
         if movementType == "deposit":
             cursor.execute(f"UPDATE accounts SET accountBalance = accountBalance + {amount} WHERE accountNumber = {originAccount}")
         elif movementType == "withdrawn":
-            cursor.execute(f"UPDATE accounts SET accountBalance = accountBalance - {amount} WHERE accountNumber = {originAccount}")
+            cursor.execute(f"UPDATE accounts SET accountBalance = accountBalance - {amount} WHERE accountNumber = {originAccount} AND accountBalance >= {amount}")
+            if cursor.rowcount == 0:
+                raise NoCredit("Cuenta sin saldo suficiente")
+            
         elif movementType == "transfer":
             if findAccount(destinationAccount) == None:
-                raise AccountnotExits("Cuenta destino no existe")
-            cursor.execute(f"UPDATE accounts SET accountBalance = accountBalance - {amount} WHERE accountNumber = {originAccount}")
+                raise AccountDestinationNotExits("Cuenta destino no existe")
+            cursor.execute(f"UPDATE accounts SET accountBalance = accountBalance - {amount} WHERE accountNumber = {originAccount} AND accountBalance >= {amount}")
+            if cursor.rowcount == 0:
+                raise NoCredit("Cuenta sin saldo suficiente")
             cursor.execute(f"UPDATE accounts SET accountBalance = accountBalance + {amount} WHERE accountNumber = {destinationAccount}")
         else:
             raise TypeMovementsnotExits("El tipo de movimiento no existe")
